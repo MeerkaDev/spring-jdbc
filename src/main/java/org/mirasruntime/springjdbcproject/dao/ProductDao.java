@@ -1,6 +1,5 @@
 package org.mirasruntime.springjdbcproject.dao;
 
-import org.mirasruntime.springjdbcproject.model.Category;
 import org.mirasruntime.springjdbcproject.model.Product;
 
 import java.util.List;
