@@ -1,6 +1,7 @@
-package org.mirasruntime.springjdbcproject.dao;
+package org.mirasruntime.springjdbcproject.dao.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.mirasruntime.springjdbcproject.dao.CategoryDao;
 import org.mirasruntime.springjdbcproject.model.Category;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;

@@ -1,6 +1,7 @@
-package org.mirasruntime.springjdbcproject.dao;
+package org.mirasruntime.springjdbcproject.dao.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.mirasruntime.springjdbcproject.dao.ProductDao;
 import org.mirasruntime.springjdbcproject.model.Category;
 import org.mirasruntime.springjdbcproject.model.Product;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,17 +18,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductDaoImpl implements ProductDao {
     private final JdbcTemplate jdbcTemplate;
+    private static final String SELECT = """
+            select p.id    as product_id,
+                   p.name  as product_name,
+                   p.price as product_price,
+                   c.id    as category_id,
+                   c.name  as category_name
+            from products p
+            join categories c on p.category_id = c.id
+            """;
 
 
     @Override
     public List<Product> findAll() {
-        String sql = "select * from products";
-        return jdbcTemplate.query(sql, this::mapRow);
+        System.out.println(SELECT);
+        return jdbcTemplate.query(SELECT, this::mapRow);
     }
 
     @Override
     public Product findById(int id) {
-        String sql = "select * from products where id = ?";
+        String sql = SELECT + "where p.id = ?";
         return jdbcTemplate.query(sql, this::mapRow, id)
                 .stream()
                 .findFirst()
@@ -73,12 +83,15 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     private Product mapRow(ResultSet rs, int rowNum) throws SQLException {
-        int id = rs.getInt("id");
-        String name = rs.getString("name");
-        Double price = rs.getDouble("price");
-        Integer category_id = rs.getInt("category_id");
-        CategoryDaoImpl categoryDao = new CategoryDaoImpl(jdbcTemplate);
-        Category category = categoryDao.findById(category_id);
+        int id = rs.getInt("product_id");
+        String name = rs.getString("product_name");
+        Double price = rs.getDouble("product_price");
+
+        Integer categoryId = rs.getInt("category_id");
+        String categoryName = rs.getString("category_name");
+
+        Category category = new Category(categoryId, categoryName);
+
         return new Product(id, name, price, category);
     }
 }
